@@ -10,8 +10,6 @@ from display import *
 
 
 vfield=Display()
-panel=Panel2()
-panel.field=vfield
-vfield.panel=panel
+panel=Panel2(vfield)
 
 panel.start()

@@ -6,11 +6,13 @@ from charges import *
 from emmath import *
 
 class Panel2(Thread):
-	def __init__(self):
+	def __init__(self,field):
 		Thread.__init__(self)
-		self.field=None
+		self.field=field
+		self.field.panel=self
 		self.activeCharge=None
 		self.sel=None
+		self.g=None
 
 	def run(self):
 		self.g=Gui()
@@ -46,7 +48,7 @@ class Panel2(Thread):
 		self.add=self.g.bu(text='Add')
 		self.rem=self.g.bu(text='Delete', command=self.remove)
 		self.g.endrow()
-		self.g.bu(text='Quit')
+		#self.g.bu(text='Quit', command=self.end)
 		
 		self.disp=self.g.mb(text='Voltage Field')
 		self.g.mi(self.disp, text='Voltage Field', command=self.showv)
@@ -61,21 +63,23 @@ class Panel2(Thread):
 		self.g.mainloop()
 		
 	def showv(self):
+		self.disp.config(text='Voltage Field')
 		self.actf=self.field.vfield
 		self.acte=self.field.vdots
 		self.field.change=True
-		for d in self.field.earrows:
-			d.visible=False
-		for d in self.field.vdots:
-			d.visible=True
+		for p in self.field.earrows:
+			self.field.earrows[p].visible=False
+		for p in self.field.vdots:
+			self.field.vdots[p].visible=True
 	def showe(self):
-		self.actf=self.field.efield
-		self.acte=self.field.earrows
+		self.disp.config(text='Electric Field')
+		self.field.actf=self.field.efield
+		self.field.acte=self.field.earrows
 		self.field.change=True
-		for d in self.field.earrows:
-			d.visible=True
-		for d in self.field.vdots:
-			d.visible=False
+		for p in self.field.earrows:
+			self.field.earrows[p].visible=True
+		for p in self.field.vdots:
+			self.field.vdots[p].visible=False
 		
 	def addPoint(self):
 		self.men.config(text='Add Point')
@@ -104,6 +108,7 @@ class Panel2(Thread):
 	def addCharge(self,p):
 		self.field.charges.append(p)
 		self.field.change=True
+		p.panel=self
 		p.makeMi()
 		
 	def findVolt(self):
@@ -112,7 +117,8 @@ class Panel2(Thread):
 	def getVolt(self):
 		p=(int(self.x.get()), int(self.y.get()), int(self.z.get()))
 		v=vAtPoint(p, self.field.charges)
-		self.ans.config(text='Voltage at (%d, %d, %d): %g V'%(p[0],p[1],p[2],v))
+		self.ans.config(text='Voltage at (%d, %d, %d): %g k'%(p[0],p[1],p[2],v))
+
 		
 	def remove(self):
 		if not self.sel: return
@@ -159,5 +165,8 @@ class Panel2(Thread):
 	def updatePos(self, x,y,z):
 		if not self.sel: return
 		self.sel.updatePos(x,y,z)
+
+	def end(self):
+		self.field.go=False
 		
 

@@ -1,5 +1,5 @@
 #math
-k=9*10**9
+k=1
 from charges import Point, Line
 
 def calcv(point, pos, q):
@@ -12,11 +12,11 @@ def calcv(point, pos, q):
 
 def calce(point, pos, q):
 	r=dist(point, pos)
-	if r<.005: return (0,0,0)
-	sc=k*q/r**3 #scale factor
+	if r<.005: return [0,0,0]
+	sc=k*q/r**3 #scale factor for e fields
 	a=point[0]-pos[0]
 	b= point[1]-pos[1]
-	c= point[2]-po2[2]
+	c= point[2]-pos[2]
 	return [sc*a, sc*b, sc*c]
 	
 
@@ -27,6 +27,12 @@ def dist(p1, p2):
 	tot=0.0
 	for i in range(len(p1)):
 		tot+= (p1[i] -p2[i])**2
+	return tot**.5
+
+def magnitude(ls):
+	tot=0
+	for a in ls:
+		tot+=a**2
 	return tot**.5
 
 def vAtPoint(p, charges):
@@ -47,7 +53,7 @@ def eAtPoint(p, charges):
 			for i in range(len(e)):
 				e[i]+=f[i]
 		elif isinstance(c, Line):
-			for x,y,z,q in zip(c.x, c.y, c.z, c.charge):
+			for x,y,z,q in zip(c.x, c.y, c.z, c.lam):
 				f=calce(p, (x,y,z),q)
 				for i in range(len(e)):
 					e[i]+=f[i]

@@ -20,6 +20,7 @@ class Display(Thread):
 		self.efield={}
 		self.vdots={}
 		self.earrows={}
+		self.go=True
 		
 		self.charges=[Point((3,3,3), 5),\
 		 Point((-2,-2, -2), -20),\
@@ -46,7 +47,7 @@ class Display(Thread):
 			self.efield[p]=[0,0,0]
 		for p in field:
 			self.vdots[p]=sphere(pos=p, radius=.06, color=(1,1,1))
-			self.earrows[p]=arrow(pos=p, axis=(0,0,0), color=(.1,1,.1), shaftwidth=.1)
+			self.earrows[p]=arrow(pos=p, axis=(.3,.3,.3), color=(.1,1,.1), shaftwidth=.01)
 			self.earrows[p].visible=False
 		
 		drawAxes(self.axes)
@@ -54,12 +55,12 @@ class Display(Thread):
 		vrange= calcVoltage(self.vfield, self.charges)
 		self.drawVolt(vrange)
 		
-		while 1:
+		while self.go:
 			self.drag()
 			if self.change: self.update()
 			time.sleep(.1)
 			
-		pygame.quit()
+		quit()
 		
 
 	def update(self):
@@ -82,13 +83,15 @@ class Display(Thread):
 		"""
 		maxv= max(abs(vrange[0]), abs(vrange[1]))
 		if maxv==0:maxv=1
-		for p,d in self.vdots:
-			d.color=(-1*self.vfield[p]/maxv,0.03, (self.vfield[p]/maxv))
+		for p in self.vdots:
+			self.vdots[p].color=(-1*self.vfield[p]/maxv,0.03, (self.vfield[p]/maxv))
 			
-	def drawE(self, emax):
-		for p,a in self.earrows:
+	def drawE(self, emax=1):
+		for p in self.earrows:
 			ax=self.efield[p]
-			a.axis=(ax[0]/emax, ax[1]/emax, ax[2]/emax)
+			mag=magnitude(ax)
+			mag*=1.2
+			self.earrows[p].axis=(ax[0]/mag, ax[1]/mag, ax[2]/mag)
 
 	def drag(self):
 		if scene.mouse.events:
@@ -129,8 +132,14 @@ def calcVoltage(vfield, charges):
 	return [minv, maxv]
 
 def calcEfield(efield, charges):
+	emax=0
 	for p in efield:
 		efield[p]=eAtPoint(p, charges)
+		mag=magnitude(efield[p])
+		if mag>emax: emax=mag
+	if emax==0:emax=1
+	return emax
+			
 
 
 

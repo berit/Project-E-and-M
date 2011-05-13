@@ -1,0 +1,20 @@
+Voltage and Electric field visualizer
+E and M project by Berit Johnson
+
+Requires Python and Python Visual to be installed
+
+Run em1.py to run
+
+Capabilities:
+
+Able to add or remove arbitrary point or line charges where both line position and line charge density may be defined parametrically
+
+Both point and line charges may be changed and affect the field accordingly
+
+Point charges may be dragged in field and affect the field accordingly
+
+Able to calculate voltage at any given point in terms of k= 1/(4 pi e0)
+
+Able to display voltage field and electric field in three dimensional space
+
+source code may be found at https://github.com/berit/Project-E-and-M

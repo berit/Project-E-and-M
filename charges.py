@@ -7,7 +7,10 @@ class Charge(object):
 		pass
 	def makeMi(self):
 		self.mi=self.panel.g.mi(self.panel.men, text=str(self), command=Callable(self.panel.select, self))
+		
 	def updateDrag(self):
+		pass
+	def updateMi(self):
 		pass
 		
 class Point(Charge):
@@ -22,10 +25,11 @@ class Point(Charge):
 		self.s=sphere(pos=self.pos, radius=.001, color=(0,0,0))
 		self.updateColor()
 		self.panel=None
+		self.mi=None
 		
 	def __str__(self):
 		p=self.pos
-		return '%dC point at (%d, %d, %d)' %(self.charge, p[0], p[1], p[2])
+		return '%dQ point at (%d, %d, %d)' %(self.charge, p[0], p[1], p[2])
 	def revert(self):
 		self.s.color=self.color
 	def updateDrag(self):
@@ -67,7 +71,7 @@ class Line(Charge):
 		self.panel=None
 		
 	def __str__(self):
-		return '%s C/m line'%self.charge
+		return '%s Q/t line'%self.charge
 
 	def revert(self):
 		self.s.red=self.red
