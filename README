@@ -1,6 +1,8 @@
 Voltage and Electric field visualizer
 E and M project by Berit Johnson
 
+This project makes use of Allen Downey's Gui module
+
 Requires Python and Python Visual to be installed
 
 Run em1.py to run
