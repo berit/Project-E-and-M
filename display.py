@@ -17,10 +17,20 @@ class Display(Thread):
 		self.charges=[]
 		self.change=False
 		self.vfield={}
+		self.efield={}
 		self.vdots={}
-		self.charges=[Point((3,3,3), 5), Point((-2,-2, -2), -20), Line(('t', 't', '-1*t')), Line(('t+1', '-1*t-2', '-1*t+3'), density='-.5')] #list of point charges
+		self.earrows={}
+		
+		self.charges=[Point((3,3,3), 5),\
+		 Point((-2,-2, -2), -20),\
+		 Line(('t', 't', '-1*t')),\
+		 Line(('t+1', '-1*t-2', '-1*t+3'),\
+		 density='-.5')] #list of point charges
+		 
 		scene.ambient=1
-		scene.range=10
+		scene.range=8
+		self.actf=self.vfield
+		self.actd=self.vdots
 		
 	def run(self):
 		for c in self.charges:
@@ -33,10 +43,11 @@ class Display(Thread):
 					field[(x,y,z)]=0
 		for p in field:
 			self.vfield[p]=0
+			self.efield[p]=[0,0,0]
 		for p in field:
 			self.vdots[p]=sphere(pos=p, radius=.06, color=(1,1,1))
-
-		
+			self.earrows[p]=arrow(pos=p, axis=(0,0,0), color=(.1,1,.1), shaftwidth=.1)
+			self.earrows[p].visible=False
 		
 		drawAxes(self.axes)
 
@@ -56,9 +67,13 @@ class Display(Thread):
 			charge.updateDrag()
 			charge.update()
 		if self.change:
-			vrange= calcVoltage(self.vfield, self.charges)
-			self.drawVolt(vrange)
-			#drawCharges(self.charges)
+			if self.actf is self.vfield:
+				vrange= calcVoltage(self.vfield, self.charges)
+				self.drawVolt(vrange)
+			elif self.actf is self.efield:
+				emax=calcEfield(self.efield, self.charges)
+				self.drawE(emax)
+
 		self.change=False
 						
 	def drawVolt(self, vrange):
@@ -67,8 +82,13 @@ class Display(Thread):
 		"""
 		maxv= max(abs(vrange[0]), abs(vrange[1]))
 		if maxv==0:maxv=1
-		for p in self.vdots:
-			self.vdots[p].color=(-1*self.vfield[p]/maxv,0.03, (self.vfield[p]/maxv))
+		for p,d in self.vdots:
+			d.color=(-1*self.vfield[p]/maxv,0.03, (self.vfield[p]/maxv))
+			
+	def drawE(self, emax):
+		for p,a in self.earrows:
+			ax=self.efield[p]
+			a.axis=(ax[0]/emax, ax[1]/emax, ax[2]/emax)
 
 	def drag(self):
 		if scene.mouse.events:

@@ -40,11 +40,6 @@ class Panel2(Thread):
 		self.g.mi(self.men, text='Add line charge', command=Callable(self.addLine))
 		self.g.mi(self.men, text='Find voltage at point', command=self.findVolt)
 
-		#for i in range(len(self.field.charges)):
-			#self.g.mi(self.men, text=str(self.field.charges[i]), command=Callable(self.select, i))
-
-		
-			
 		
 		#add
 		self.g.row([1,1])
@@ -52,6 +47,10 @@ class Panel2(Thread):
 		self.rem=self.g.bu(text='Delete', command=self.remove)
 		self.g.endrow()
 		self.g.bu(text='Quit')
+		
+		self.disp=self.g.mb(text='Voltage Field')
+		self.g.mi(self.disp, text='Voltage Field', command=self.showv)
+		self.g.mi(self.disp, text='Electric Field', command=self.showe)
 		#ans
 		self.ans=self.g.la(text='')
 
@@ -60,6 +59,23 @@ class Panel2(Thread):
 		for chrg in self.field.charges:
 			chrg.makeMi()
 		self.g.mainloop()
+		
+	def showv(self):
+		self.actf=self.field.vfield
+		self.acte=self.field.vdots
+		self.field.change=True
+		for d in self.field.earrows:
+			d.visible=False
+		for d in self.field.vdots:
+			d.visible=True
+	def showe(self):
+		self.actf=self.field.efield
+		self.acte=self.field.earrows
+		self.field.change=True
+		for d in self.field.earrows:
+			d.visible=True
+		for d in self.field.vdots:
+			d.visible=False
 		
 	def addPoint(self):
 		self.men.config(text='Add Point')

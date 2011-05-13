@@ -1,5 +1,5 @@
 #math
-k=1
+k=9*10**9
 from charges import Point, Line
 
 def calcv(point, pos, q):
